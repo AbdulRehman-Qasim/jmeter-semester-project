@@ -25,18 +25,20 @@ jobs:
           mv apache-jmeter-5.6.3 jmeter
           chmod -R +x jmeter/bin || true
 
-      - name: Run Performance Tests and Generate Report
+      - name: Run Performance Tests
         run: |
-          rm -rf reports || true
           mkdir -p results reports
           jmeter/bin/jmeter -n \
             -t tests/load_test.jmx \
-            -l results/results.jtl \
-            -e -o reports
+            -l results/results.jtl
+
+      - name: Generate HTML Report
+        run: |
+          jmeter/bin/jmeter -g results/results.jtl -o reports/
 
       - name: Upload HTML Report as Artifact
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: jmeter-report
-          path: reports
+          path: reports/
