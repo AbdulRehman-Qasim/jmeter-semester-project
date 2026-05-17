@@ -44,6 +44,14 @@ jobs:
             -t tests/load_test.jmx \
             -l results/results.jtl
 
+      - name: Validate JTL contains sample rows
+        run: |
+          line_count=$(wc -l < results/results.jtl)
+          if [ "$line_count" -le 1 ]; then
+            echo "results/results.jtl contains only the header and no sample rows"
+            exit 1
+          fi
+
       - name: Upload JTL Results as Artifact
         uses: actions/upload-artifact@v4
         if: always()
